@@ -4,7 +4,7 @@ A financial analytics project focused on reviewing Juhayna Food Industries (JUFO
 
 ## Project Overview
 
-The analysis uses quarterly financial statement data to examine how Juhayna's performance changes over time. It covers three core financial statements:
+The analysis uses quarterly financial statement data to examine how Juhayna's performance changes over time. It combines financial statement analysis, a Power BI dashboard, and a Python-based machine-learning experiment that compares regression models to forecast quarterly revenue. It covers three core financial statements:
 
 - **Income Statement** — revenue, cost of revenue, gross profit, operating income, net income, and profitability margins.
 - **Balance Sheet** — assets, liabilities, equity, working capital, cash, inventory, and debt.
@@ -25,7 +25,8 @@ The provided dataset contains quarterly periods from **September 2021 through Ju
 - **Python** — data analysis and preparation.
 - **Pandas & NumPy** — tabular data manipulation and numerical analysis.
 - **Matplotlib** — data visualization.
-- **Excel** — financial statement data source and review.
+- **scikit-learn** — regression models and model comparison.
+- **Excel / openpyxl** — financial statement data source and workbook reading.
 - **Power BI** — interactive financial dashboard and reporting.
 
 > The tools listed above reflect the project materials and stated workflow. Add any additional libraries or techniques only if they are used in the final notebook.
@@ -49,6 +50,37 @@ The source workbook presents the financial values as supplied. Confirm the repor
 3. Explore profitability, liquidity, leverage, and cash-flow indicators.
 4. Build visual summaries in Power BI.
 5. Use the resulting trends to identify areas that may warrant further business investigation.
+
+## Machine Learning: Quarterly Revenue Forecasting
+
+The notebook builds a time-based forecasting workflow for quarterly revenue using the `Income Statement` sheet. It extracts the `Revenue` row, parses reporting-period dates, sorts the observations chronologically, and creates year, quarter, and time-index fields.
+
+### Features and target
+
+- **Target (`Y`):** `Revenue`
+- **Features (`X`):** `Time_Index` plus quarter indicator variables (`Q1`, `Q2`, `Q3`, and `Q4`)
+- **Forecast horizon:** Q3 2026 and Q4 2026
+
+### Models compared
+
+| Model | Configuration |
+|---|---|
+| Linear Regression | `LinearRegression()` |
+| Decision Tree Regressor | `random_state=42` |
+| Random Forest Regressor | `n_estimators=200`, `random_state=42` |
+
+### Time-based evaluation
+
+The notebook evaluates the models using two chronological tests:
+
+1. **Test 1 — 2025:** train on periods through 2024 and test on 2025.
+2. **Test 2 — Q1–Q2 2026:** train on periods through 2025 and test on the first two quarters of 2026.
+
+For each test, it calculates the absolute percentage error for each test observation and reports `100 - mean(absolute percentage error)` as **Accuracy (%)**. In regression forecasting, this is more accurately described as a *MAPE-derived score* rather than conventional classification accuracy; it can be negative if percentage errors exceed 100%. The notebook then averages this score across tests to select the model with the highest mean score.
+
+After model selection, the chosen model is refit on all available observations before forecasting Q3 and Q4 2026. The notebook plots the historical revenue trend and an actual-versus-forecast chart. Forecasts are model estimates, not reported financial results.
+
+> **Interpretation note:** the current model uses only time index and quarter indicators. It does not include explanatory business drivers such as volume, pricing, inflation, costs, or market conditions. With a relatively small quarterly dataset, forecasts should be treated as exploratory and interpreted alongside the actual financial statements.
 
 ## Example Observations
 
@@ -77,7 +109,7 @@ These figures are reproduced from the supplied workbook; the currency and scale 
 
 ## Skills Demonstrated
 
-Financial statement analysis · Data preparation · Exploratory data analysis (EDA) · Data visualization · Power BI reporting · Python-based analysis · Business-focused interpretation of financial trends
+Financial statement analysis · Data preparation · Exploratory data analysis (EDA) · Regression modeling · Time-based model evaluation · Revenue forecasting · Data visualization · Power BI reporting · Python-based analysis · Business-focused interpretation of financial trends
 
 ## Notes
 
